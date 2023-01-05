@@ -9,6 +9,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
     use Notifiable;
+    const TYPE_USER = 'user';
+    const TYPE_ADMIN = 'admin';
+    const TYPES = [self::TYPE_USER, self::TYPE_ADMIN];
 
     /**
      * The attributes that are mass assignable.
@@ -16,8 +19,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
-    ];
+        'type','mobile', 'email', 'name', 'password', 'avatar', 'website', 'verify_code', 'verified_at'
+        ];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -25,7 +28,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'verify_code',
     ];
 
     /**
@@ -34,6 +37,6 @@ class User extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'verified_at' => 'datetime',
     ];
 }
