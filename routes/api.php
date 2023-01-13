@@ -15,8 +15,15 @@ use Illuminate\Http\Request;
 
 Route::group(['namespace'=>'\Laravel\Passport\Http\Controllers','middleware'=>['throttle']], function ($router){
     $router->post('login',[
-        'as'=>'login',
+        'as'=>'auth.login',
         'uses'=> 'AccessTokenController@issueToken'
+    ]);
+});
+
+\Illuminate\Support\Facades\Route::group([],function ($router){
+    $router->post('register',[
+        'as'=>'auth.register',
+        'uses'=> 'AuthController@register'
     ]);
 });
 
