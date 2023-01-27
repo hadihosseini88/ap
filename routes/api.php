@@ -13,19 +13,24 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group(['namespace'=>'\Laravel\Passport\Http\Controllers','middleware'=>['throttle']], function ($router){
-    $router->post('login',[
-        'as'=>'auth.login',
-        'uses'=> 'AccessTokenController@issueToken'
+Route::group(['namespace' => '\Laravel\Passport\Http\Controllers', 'middleware' => ['throttle']], function ($router) {
+    $router->post('login', [
+        'as' => 'auth.login',
+        'uses' => 'AccessTokenController@issueToken'
     ]);
 });
 
-\Illuminate\Support\Facades\Route::group([],function ($router){
-    $router->post('register',[
-        'as'=>'auth.register',
-        'uses'=> 'AuthController@register'
+\Illuminate\Support\Facades\Route::group([], function ($router) {
+    $router->post('register', [
+        'as' => 'auth.register',
+        'uses' => 'AuthController@register'
     ]);
 });
+
+\Illuminate\Support\Facades\Route::get('register-verify/{code}/{field}', [
+    'as' => 'auth.register.verify',
+    'uses' => 'AuthController@registerVerify'
+]);
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

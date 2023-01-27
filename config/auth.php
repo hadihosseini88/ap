@@ -100,10 +100,13 @@ return [
         ],
     ],
 
-    // d تنظیمات به دقیقه می باشد
+    // تنظیمات به دقیقه می باشد
     'token_expiration' => [
         'token' => env('EXPIRATION_TOKEN', 14400), // 10 * 24 * 60
         'refresh_token' => env('EXPIRATION_TOKEN', 43200), // 30 * 24 * 60
     ],
+
+    // زمان انقضای کش رجیستر به صورت دقیقه
+    'register_cache_expiration' => env('EXPIRATION_REGISTER_CACHE', 1440), // 24 * 60
 
 ];
