@@ -27,7 +27,7 @@ Route::group(['namespace' => '\Laravel\Passport\Http\Controllers', 'middleware' 
     ]);
 });
 
-\Illuminate\Support\Facades\Route::get('register-verify/{code}/{field}', [
+\Illuminate\Support\Facades\Route::post('register-verify', [
     'as' => 'auth.register.verify',
     'uses' => 'AuthController@registerVerify'
 ]);
