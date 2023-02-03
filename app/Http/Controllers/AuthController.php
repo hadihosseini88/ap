@@ -19,7 +19,6 @@ class AuthController extends Controller
         $field = $request->has('email') ? 'email' : 'mobile';
         $value = $request->input($field);
 
-        $code = random_int(100000, 999999);
         // اگر کاربر ثبت نام کرده باشد دو حالت داره که یا کد زده یا نه
         if ($user = User::query()->where($field, $value)->first()){
             // اگر کاربر از قبل ثبت نام خودش را کامل کرده باشه داخل بلاک پایین مبره
@@ -28,6 +27,8 @@ class AuthController extends Controller
             }
             return response(['message' => 'کد فعالسازی قبلا ارسال شده'], 200);
         }
+
+        $code = random_int(100000, 999999);
         $user = User::query()->create([
             $field => $value,
             'verify_code' => $code,

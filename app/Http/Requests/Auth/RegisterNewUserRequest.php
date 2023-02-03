@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Rules\MobileRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterNewUserRequest extends FormRequest
@@ -25,7 +26,7 @@ class RegisterNewUserRequest extends FormRequest
     {
         return [
             //todo ولیدیشن موبایل
-            'mobile'=>'required_without:email',
+            'mobile'=>['required_without:email', new MobileRule()],
             'email'=>'required_without:mobile|email',
         ];
     }
