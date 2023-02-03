@@ -16,13 +16,13 @@ class AuthController extends Controller
 {
     public function register(RegisterNewUserRequest $request)
     {
-        $field = $request->has('email') ? 'email' : 'mobile';
-        $value = $request->input($field);
+        $field = $request->getFieldName();
+        $value = $request->getFieldValue();
 
         // اگر کاربر ثبت نام کرده باشد دو حالت داره که یا کد زده یا نه
-        if ($user = User::query()->where($field, $value)->first()){
+        if ($user = User::query()->where($field, $value)->first()) {
             // اگر کاربر از قبل ثبت نام خودش را کامل کرده باشه داخل بلاک پایین مبره
-            if ($user->verified_at){
+            if ($user->verified_at) {
                 throw new UserAlreadyRegisteredException('شما قبلا ثبت نام کرده اید');
             }
             return response(['message' => 'کد فعالسازی قبلا ارسال شده'], 200);
@@ -41,16 +41,16 @@ class AuthController extends Controller
 
     public function registerVerify(RegisterVerifyUserRequest $request)
     {
-        $field = $request->has('email') ? 'email' : 'mobile';
+        $field = $request->getFieldName();
         $code = $request->code;
 
         $user = User::query()->where([
             $field => $request->input($field),
-            'verify_code' =>$code,
+            'verify_code' => $code,
 
         ])->first();
 
-        if (empty($user)){
+        if (empty($user)) {
             throw new ModelNotFoundException('کاربری با کد مورد نظر پیدا نشد');
         }
 
@@ -58,7 +58,7 @@ class AuthController extends Controller
         $user->verified_at = now();
         $user->save();
 
-        return response($user,200);
+        return response($user, 200);
 
     }
 
