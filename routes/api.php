@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,24 +14,31 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group(['namespace' => '\Laravel\Passport\Http\Controllers', 'middleware' => ['throttle']], function ($router) {
+\Illuminate\Support\Facades\Route::group(['namespace' => '\Laravel\Passport\Http\Controllers', 'middleware' => ['throttle']], function ($router) {
     $router->post('login', [
         'as' => 'auth.login',
         'uses' => 'AccessTokenController@issueToken'
     ]);
 });
 
-\Illuminate\Support\Facades\Route::group([], function ($router) {
+Route::group([], function ($router) {
     $router->post('register', [
         'as' => 'auth.register',
         'uses' => 'AuthController@register'
     ]);
 });
 
-\Illuminate\Support\Facades\Route::post('register-verify', [
-    'as' => 'auth.register.verify',
-    'uses' => 'AuthController@registerVerify'
+Route::post('resend-verification-code', [
+    'as' => 'auth.register.resend.verification.code',
+    'uses' => 'AuthController@resendVerificationCode'
 ]);
+
+Route::group([], function ($router) {
+    $router->post('register', [
+        'as' => 'auth.register',
+        'uses' => 'AuthController@register'
+    ]);
+});
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
