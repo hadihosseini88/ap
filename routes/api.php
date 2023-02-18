@@ -40,6 +40,20 @@ Route::group([], function ($router) {
     ]);
 });
 
+Route::post(
+    'change-email',
+    [
+        'as' => 'change.email',
+        'uses' => 'UserController@changeEmail'
+    ])->middleware(['auth:api']);
+
+Route::post(
+    'change-email-submit',
+    [
+        'as' => 'change.email.submit',
+        'uses' => 'UserController@changeEmailSubmit'
+    ])->middleware(['auth:api']);
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

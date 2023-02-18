@@ -106,8 +106,11 @@ return [
         'refresh_token' => env('EXPIRATION_REFRESH_TOKEN', 43200), // 30 * 24 * 60
     ],
 
+    // زمان انقضای کش تغییر ایمیل به صورت دقیقه
+    'change_email_cache_expiration' => env('EXPIRATION_CHANGE_EMAIL_CACHE', 1440), // 24 * 60
+
     // زمان انقضای کش رجیستر به صورت دقیقه
-    'register_cache_expiration' => env('EXPIRATION_REGISTER_CACHE', 1440), // 24 * 60
+//    'register_cache_expiration' => env('EXPIRATION_REGISTER_CACHE', 1440), // 24 * 60
 
     // فاصله زمانی برای ایجاد کد فعالسازی به دقیقه برای کاربر
     'resend_verification_code_time_diff' =>  env('RESEND_VERIFICATION_CODE_TIME_DIFF', 2),
