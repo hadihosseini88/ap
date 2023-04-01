@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Channel;
 use App\Exceptions\RegisterVerificationException;
 use App\Exceptions\UserAlreadyRegisteredException;
 use App\Http\Requests\Auth\RegisterNewUserRequest;
@@ -11,33 +12,46 @@ use App\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
     public function register(RegisterNewUserRequest $request)
     {
-        $field = $request->getFieldName();
-        $value = $request->getFieldValue();
+        try {
+            DB::beginTransaction();
+            $field = $request->getFieldName();
+            $value = $request->getFieldValue();
 
-        // اگر کاربر ثبت نام کرده باشد دو حالت داره که یا کد زده یا نه
-        if ($user = User::query()->where($field, $value)->first()) {
-            // اگر کاربر از قبل ثبت نام خودش را کامل کرده باشه داخل بلاک پایین مبره
-            if ($user->verified_at) {
-                throw new UserAlreadyRegisteredException('شما قبلا ثبت نام کرده اید');
+            // اگر کاربر ثبت نام کرده باشد دو حالت داره که یا کد زده یا نه
+            if ($user = User::query()->where($field, $value)->first()) {
+                // اگر کاربر از قبل ثبت نام خودش را کامل کرده باشه داخل بلاک پایین مبره
+                if ($user->verified_at) {
+                    throw new UserAlreadyRegisteredException('شما قبلا ثبت نام کرده اید');
+                }
+                return response(['message' => 'کد فعالسازی قبلا ارسال شده'], 200);
             }
-            return response(['message' => 'کد فعالسازی قبلا ارسال شده'], 200);
+
+            $code = random_verification_code();
+            $user = User::query()->create([
+                $field => $value,
+                'verify_code' => $code,
+            ]);
+
+            $channelName = $field === 'mobile' ? Str::after($value, '+98') : Str::before($value, '@');
+            $channel = $user->channel()->create(['names' => $channelName]);
+
+            //todo ارسال تایید ایمیل یا پیامک
+            Log::info('SEND-REGISTER-CODE-MESSAGE-TO-USER', ['code' => $code]);
+            DB::commit();
+            return response(['message' => 'کاربر ثبت موقت شد'], 200);
+        } catch (\Exception $exception) {
+            Log::error($exception);
+            DB::rollBack();
+            return response(['message'=>'خطایی رخ داده است']);
         }
-
-        $code = random_verification_code();
-        $user = User::query()->create([
-            $field => $value,
-            'verify_code' => $code,
-        ]);
-
-        //todo ارسال تایید ایمیل یا پیامک
-        Log::info('SEND-REGISTER-CODE-MESSAGE-TO-USER', ['code' => $code]);
-        return response(['message' => 'کاربر ثبت موقت شد'], 200);
     }
 
     public function registerVerify(RegisterVerifyUserRequest $request)
