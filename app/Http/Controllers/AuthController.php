@@ -40,8 +40,7 @@ class AuthController extends Controller
                 'verify_code' => $code,
             ]);
 
-            $channelName = $field === 'mobile' ? Str::after($value, '+98') : Str::before($value, '@');
-            $channel = $user->channel()->create(['names' => $channelName]);
+
 
             //todo ارسال تایید ایمیل یا پیامک
             Log::info('SEND-REGISTER-CODE-MESSAGE-TO-USER', ['code' => $code]);
